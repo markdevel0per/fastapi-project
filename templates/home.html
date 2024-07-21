@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p class="text-center h3 mt-5 mb-5">
+    Hello. Type your city to know the weather forecast there
+</p>
+<form action="/submit" method="post" class="text-center mt-5 mb-5" id="input">
+    <label for="city"></label>
+    <input type="search" name="user_input" id="city" placeholder="Type the city here" required>
+    <button type="submit" class="btn btn-info">Submit</button>
+</form>
+
+{% if weather %}
+    <div class="text-center container row justify-content-around mx-auto">
+        <h1 class="mb-5">Weather in {{ city }}</h1>
+        <div class="card bg-light mb-3 col-4" style="max-width: 18rem;">
+            <h2 class="card-header">Current Weather</h2>
+            <div class="card-body">
+                <img src="{{ weather.current.icon }}" alt="Weather image">
+                <p>Condition: {{ weather.current.condition }}</p>
+                <p>Temperature: {{ weather.current.temp }}°C</p>
+                <p>Wind: {{ weather.current.wind }} kph</p>
+            </div>
+        </div>
+        {% for day in weather.forecast %}
+        <div class="card bg-warning mb-3 col-4" style="max-width: 18rem;">
+            <h2 class="card-header">{{ day.date }}</h2>
+            <div class="card-body">
+                <img src="{{ day.icon }}" alt="Weather image">
+                <p>Condition: {{ day.condition }}</p>
+                <p>Temperature: {{ day.temp_avg }}°C</p>
+                <p>Max wind: {{ day.wind }} kph</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% elif index_page %}
+{% else %}
+    <h1 class="text-center text-danger">There isn't a city named {{ city }} or an API key is invalid.</h1>
+{% endif %}
+{% endblock %}
+{% block visited %}
+<h2 class="text-center text-success">Last visited cities:</h2>
+<div class="row justify-content-around container mx-auto">
+{% for city in cached_cities %}
+    <a href="{{ url_for('weather', city=city) }}" class="text-center text-secondary col-4 h4">{{ city }}</a>
+{% endfor %}
+    </div>
+{% endblock %}
